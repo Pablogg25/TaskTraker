@@ -6,7 +6,11 @@ import java.sql.Statement;
 public class DatabaseInitializer {
 
     public static void initialize() {
+        System.out.println("DB REAL PATH: " +
+                new java.io.File("tracker.db").getAbsolutePath());
 
+        System.out.println("WORKING DIR: " +
+                System.getProperty("user.dir"));
         String sql = """
                 CREATE TABLE IF NOT EXISTS tasks (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
