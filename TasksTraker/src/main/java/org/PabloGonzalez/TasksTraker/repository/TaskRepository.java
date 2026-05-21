@@ -16,27 +16,22 @@ public class TaskRepository {
 
         String sql = """
                 INSERT INTO tasks (
-                    code,
                     name,
                     description,
-                    project_name,
                     hours,
                     status
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?)
                 """;
 
         try (
                 Connection conn = DatabaseManager.connect();
                 PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
-
-            stmt.setString(1, task.getCode());
-            stmt.setString(2, task.getName());
-            stmt.setString(3, task.getDescription());
-            stmt.setString(4, task.getProjectName());
-            stmt.setDouble(5, task.getHours());
-            stmt.setString(6, task.getStatus());
+            stmt.setString(1, task.getName());
+            stmt.setString(2, task.getDescription());
+            stmt.setDouble(3, task.getHours());
+            stmt.setString(4, task.getStatus());
 
             stmt.executeUpdate();
 
@@ -54,18 +49,19 @@ public class TaskRepository {
         try (
                 Connection conn = DatabaseManager.connect();
                 Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
+                ResultSet rs = stmt.executeQuery(sql)
         ) {
+
             while (rs.next()) {
                 Task task = new Task();
 
                 task.setId(rs.getInt("id"));
-                task.setCode(rs.getString("code"));
                 task.setName(rs.getString("name"));
                 task.setDescription(rs.getString("description"));
-                task.setProjectName(rs.getString("project_name"));
                 task.setHours(rs.getDouble("hours"));
                 task.setStatus(rs.getString("status"));
+
+                tasks.add(task);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,10 +82,8 @@ public class TaskRepository {
                 Task task = new Task();
 
                 task.setId(rs.getInt("id"));
-                task.setCode(rs.getString("code"));
                 task.setName(rs.getString("name"));
                 task.setDescription(rs.getString("description"));
-                task.setProjectName(rs.getString("project_name"));
                 task.setHours(rs.getDouble("hours"));
                 task.setStatus(rs.getString("status"));
                 return task;
@@ -105,10 +99,8 @@ public class TaskRepository {
         String sql = """
                 UPDATE tasks
                 SET
-                    code = ?,
                     name = ?,
                     description = ?,
-                    project_name = ?,
                     hours = ?,
                     status = ?
                 WHERE id = ?
@@ -119,10 +111,8 @@ public class TaskRepository {
                 PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
 
-            stmt.setString(1, task.getCode());
             stmt.setString(2, task.getName());
             stmt.setString(3, task.getDescription());
-            stmt.setString(4, task.getProjectName());
             stmt.setDouble(5, task.getHours());
             stmt.setString(6, task.getStatus());
             stmt.setInt(7, task.getId());

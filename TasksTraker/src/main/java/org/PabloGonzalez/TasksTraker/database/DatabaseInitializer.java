@@ -14,10 +14,8 @@ public class DatabaseInitializer {
         String sql = """
                 CREATE TABLE IF NOT EXISTS tasks (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                code TEXT NOT NULL,
                                 name TEXT NOT NULL,
                                 description TEXT,
-                                project_name TEXT,
                                 hours REAL DEFAULT 0,
                                 status TEXT
                             );""";

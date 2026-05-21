@@ -1,8 +1,11 @@
 package org.PabloGonzalez.TasksTraker.controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.PabloGonzalez.TasksTraker.model.Task;
 import org.PabloGonzalez.TasksTraker.repository.TaskRepository;
 
@@ -27,16 +30,27 @@ public class MainViewController {
 
     @FXML
     private TableColumn<Task, Void> actionsCol;
+    @FXML
+    private VBox newTaskPanel;
 
+    @FXML
+    private TextField nameField;
+
+    @FXML
+    private TextArea descriptionField;
     private final TaskRepository repository = new TaskRepository();
+
+    private final ObservableList<Task> taskList =
+            FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
 
-        System.out.println("INIT OK");
-
         setupColumns();
         setupActionsColumn();
+
+        tableView.setItems(taskList);
+
         loadTasks();
     }
 
@@ -45,11 +59,12 @@ public class MainViewController {
     // =========================
     private void loadTasks() {
 
-        List<Task> taskList = repository.findAll();
+        List<Task> tasksFromDb = repository.findAll();
 
-        System.out.println("Tasks en BD: " + taskList.size());
+        System.out.println("Tasks en BD: " + tasksFromDb.size());
 
-        tableView.getItems().setAll(taskList);
+        taskList.clear();
+        taskList.addAll(tasksFromDb);
     }
 
     // =========================
@@ -152,37 +167,57 @@ public class MainViewController {
     }
 
     // =========================
-    // BOTONES SUPERIORES
+    // FLUJO DE CREACIÓN DE TAREA
     // =========================
     @FXML
     private void onNewTask() {
-
-        TextInputDialog dialog = new TextInputDialog();
-
-        dialog.setTitle("Nueva tarea");
-        dialog.setHeaderText("Crear tarea");
-        dialog.setContentText("Nombre:");
-
-
-        dialog.showAndWait().ifPresent(name -> {
-
-            Task task = new Task();
-            task.setName(name);
-            task.setDescription("");
-            task.setHours(0);
-            task.setStatus("ACTIVA");
-
-            repository.save(task);
-
-            loadTasks();
-        });
+        newTaskPanel.setVisible(true);
+        newTaskPanel.setManaged(true);
     }
 
+    @FXML
+    private void onCancelTask() {
+        newTaskPanel.setVisible(false);
+        newTaskPanel.setManaged(false);
+        clearForm();
+    }
+
+    @FXML
+    private void onSaveTask() {
+
+        Task task = new Task();
+
+        task.setName(nameField.getText());
+        task.setDescription(descriptionField.getText());
+        task.setHours(0);
+        task.setStatus("ACTIVA");
+
+        repository.save(task);
+
+        loadTasks();
+
+        clearForm();
+
+        newTaskPanel.setVisible(false);
+        newTaskPanel.setManaged(false);
+    }
+
+    private void clearForm() {
+        nameField.clear();
+        descriptionField.clear();
+    }
+
+    //=========================
+    // FLUJO DE EDICIÓN DE TASK
+    //==========================
     @FXML
     private void onEditTask() {
         System.out.println("Editar tarea");
     }
 
+    //=========================
+    // FLUJO DE ELIMINACIÓN DE TASK
+    //==========================
     @FXML
     private void onDeleteTask() {
         System.out.println("Eliminar global");

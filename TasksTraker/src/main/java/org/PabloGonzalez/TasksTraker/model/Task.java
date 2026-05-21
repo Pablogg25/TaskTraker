@@ -2,10 +2,8 @@ package org.PabloGonzalez.TasksTraker.model;
 
 public class Task {
     private int id;
-    private String code;
     private String name;
     private String description;
-    private String projectName;
     private double hours;
     private String status;
 
@@ -13,12 +11,10 @@ public class Task {
 
     }
 
-    public Task(int id, String code, String name, String description, String projectName, double hours, String status) {
+    public Task(int id, String name, String description, double hours, String status) {
         this.id = id;
-        this.code = code;
         this.name = name;
         this.description = description;
-        this.projectName = projectName;
         this.hours = hours;
         this.status = status;
     }
@@ -29,14 +25,6 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getName() {
@@ -53,14 +41,6 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
     }
 
     public double getHours() {
@@ -83,9 +63,7 @@ public class Task {
     public String toString() {
         return "Task{" +
                 "id=" + id +
-                ", code='" + code + '\'' +
                 ", name='" + name + '\'' +
-                ", projectName='" + projectName + '\'' +
                 ", hours=" + hours +
                 ", status='" + status + '\'' +
                 '}';
