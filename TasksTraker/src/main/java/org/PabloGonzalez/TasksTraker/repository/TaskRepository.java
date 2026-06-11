@@ -111,11 +111,11 @@ public class TaskRepository {
                 PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
 
-            stmt.setString(2, task.getName());
-            stmt.setString(3, task.getDescription());
-            stmt.setDouble(5, task.getHours());
-            stmt.setString(6, task.getStatus());
-            stmt.setInt(7, task.getId());
+            stmt.setString(1, task.getName());
+            stmt.setString(2, task.getDescription());
+            stmt.setDouble(3, task.getHours());
+            stmt.setString(4, task.getStatus());
+            stmt.setInt(5, task.getId());
 
             stmt.executeUpdate();
 

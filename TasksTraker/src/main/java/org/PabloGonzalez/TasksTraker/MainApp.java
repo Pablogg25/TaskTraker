@@ -22,6 +22,9 @@ public class MainApp extends Application {
 
         stage.setTitle("Tasks Tracker");
         stage.setScene(scene);
+        stage.setWidth(1100);
+        stage.setHeight(650);
+        stage.centerOnScreen();
         stage.show();
     }
 }

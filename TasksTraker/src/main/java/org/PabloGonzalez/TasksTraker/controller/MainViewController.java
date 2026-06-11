@@ -40,8 +40,7 @@ public class MainViewController {
     private TextArea descriptionField;
     private final TaskRepository repository = new TaskRepository();
 
-    private final ObservableList<Task> taskList =
-            FXCollections.observableArrayList();
+    private final ObservableList<Task> taskList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -61,7 +60,7 @@ public class MainViewController {
 
         List<Task> tasksFromDb = repository.findAll();
 
-        System.out.println("Tasks en BD: " + tasksFromDb.size());
+        //System.out.println("Tasks en BD: " + tasksFromDb.size());
 
         taskList.clear();
         taskList.addAll(tasksFromDb);
@@ -72,29 +71,13 @@ public class MainViewController {
     // =========================
     private void setupColumns() {
 
-        nameCol.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(
-                        data.getValue().getName()
-                )
-        );
+        nameCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getName()));
 
-        descCol.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(
-                        data.getValue().getDescription()
-                )
-        );
+        descCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getDescription()));
 
-        hoursCol.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleObjectProperty<>(
-                        data.getValue().getHours()
-                )
-        );
+        hoursCol.setCellValueFactory(data -> new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getHours()));
 
-        statusCol.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(
-                        data.getValue().getStatus()
-                )
-        );
+        statusCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getStatus()));
     }
 
     // =========================
@@ -104,8 +87,8 @@ public class MainViewController {
 
         actionsCol.setCellFactory(col -> new TableCell<>() {
 
-            private final Button addHoursBtn = new Button("+");
-            private final Button deleteBtn = new Button("X");
+            private final Button addHoursBtn = new Button("Añadir Horas");
+            private final Button deleteBtn = new Button("Eliminar");
 
             private final HBox box = new HBox(5, addHoursBtn, deleteBtn);
 
@@ -185,17 +168,37 @@ public class MainViewController {
     @FXML
     private void onSaveTask() {
 
-        Task task = new Task();
+        // =========================
+        // MODO EDICIÓN
+        // =========================
+        if (editingTask != null) {
 
-        task.setName(nameField.getText());
-        task.setDescription(descriptionField.getText());
-        task.setHours(0);
-        task.setStatus("ACTIVA");
+            editingTask.setName(nameField.getText());
+            editingTask.setDescription(descriptionField.getText());
 
-        repository.save(task);
+            repository.update(editingTask);
 
+            editingTask = null;
+
+        } else {
+
+            // =========================
+            // MODO CREACIÓN
+            // =========================
+            Task task = new Task();
+
+            task.setName(nameField.getText());
+            task.setDescription(descriptionField.getText());
+            task.setHours(0);
+            task.setStatus("ACTIVA");
+
+            repository.save(task);
+        }
+
+        // =========================
+        // REFRESCAR UI
+        // =========================
         loadTasks();
-
         clearForm();
 
         newTaskPanel.setVisible(false);
@@ -210,9 +213,30 @@ public class MainViewController {
     //=========================
     // FLUJO DE EDICIÓN DE TASK
     //==========================
+    private Task editingTask = null;
+
     @FXML
     private void onEditTask() {
-        System.out.println("Editar tarea");
+
+        Task selected = tableView.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText(null);
+            alert.setContentText("Selecciona una tarea");
+            alert.showAndWait();
+
+            return;
+        }
+
+        editingTask = selected;
+
+        nameField.setText(selected.getName());
+        descriptionField.setText(selected.getDescription());
+
+        newTaskPanel.setVisible(true);
+        newTaskPanel.setManaged(true);
     }
 
     //=========================
@@ -220,6 +244,33 @@ public class MainViewController {
     //==========================
     @FXML
     private void onDeleteTask() {
-        System.out.println("Eliminar global");
+
+        Task selected = tableView.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText(null);
+            alert.setContentText("Selecciona una tarea");
+            alert.showAndWait();
+
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+
+        confirm.setTitle("Eliminar tarea");
+        confirm.setHeaderText("¿Eliminar tarea?");
+        confirm.setContentText(selected.getName());
+
+        confirm.showAndWait().ifPresent(result -> {
+
+            if (result == ButtonType.OK) {
+
+                repository.deleteById(selected.getId());
+
+                loadTasks();
+            }
+        });
     }
 }
