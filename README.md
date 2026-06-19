@@ -1,48 +1,168 @@
 # TaskTraker
 
 **Descripción**
-- **Proyecto**: Aplicación de escritorio desarrollada con Java, JavaFX y SQLite.
-- **Propósito**: Llevar un registro (contador) de las horas dedicadas a proyectos de programación para imputarlas en el programa de trabajo a fin de mes. Permite crear, editar y eliminar tareas y sumar horas trabajadas por tarea.
+- **Proyecto**: Aplicación para gestionar y registrar horas dedicadas a proyectos de programación. Facilita crear, editar, eliminar tareas y contabilizar horas trabajadas para imputarlas al programa de trabajo a fin de mes.
+- **Versión actual**: v1.0 (JavaFX) | **En desarrollo**: v2.0.0 (Spring Boot + Vue)
 
-**Tecnologías**
-- **Lenguaje**: Java
-- **UI**: JavaFX (FXML)
-- **Base de datos**: SQLite
+---
+
+## 📋 Versión 1.0 - JavaFX (Actual)
+
+**Descripción**: Aplicación de escritorio monolítica con JavaFX.
+
+**Stack tecnológico**
+- **Backend/UI**: Java 21 + JavaFX
+- **Base de datos**: SQLite (local)
 - **Build**: Maven
 
 **Instalación y ejecución**
-- Abrir el proyecto en IntelliJ IDEA y ejecutar la clase `MainApp`.
-- Alternativamente, desde la raíz del proyecto con Maven:
-
 ```bash
+# Opción 1: Desde IntelliJ IDEA
+# Ejecutar la clase MainApp directamente
+
+# Opción 2: Desde línea de comandos
+cd TasksTraker
 mvn clean package
 mvn javafx:run
 ```
 
-Si hay problemas con JavaFX al ejecutar desde línea de comandos, ejecutar desde IntelliJ es lo más sencillo.
+**Estructura del proyecto (v1.0)**
+```
+TasksTraker/
+├── src/main/java/org/PabloGonzalez/TasksTraker/
+│   ├── MainApp.java                          # Punto de entrada de la aplicación
+│   ├── Main.java                             # Lanzador alternativo
+│   ├── Lanzador.java                         # Configuración de lanzamiento
+│   ├── controller/
+│   │   └── MainViewController.java           # Controlador principal (FXML)
+│   ├── model/
+│   │   └── Task.java                         # Modelo de datos (Tarea)
+│   ├── repository/
+│   │   └── TaskRepository.java               # Operaciones CRUD sobre BD
+│   ├── database/
+│   │   ├── DatabaseInitializer.java          # Inicialización de BD
+│   │   └── DatabaseManager.java              # Gestión de conexiones
+│   └── service/                              # (Vacío, preparado para lógica)
+├── src/main/resources/
+│   └── views/
+│       ├── main-view.fxml                    # Vista principal (listado de tareas)
+│       └── new-task.fxml                     # Vista para crear/editar tareas
+├── pom.xml                                   # Configuración Maven
+└── tracker.db                                # Base de datos SQLite (generada en runtime)
+```
 
-**Uso**
-- Crear una nueva tarea desde la interfaz (`new-task.fxml`).
-- Editar o eliminar tareas existentes desde la vista principal (`main-view.fxml`).
-- Añadir o restar tiempo a una tarea para llevar el conteo de horas dedicadas.
+---
 
-**Estructura relevante del proyecto**
-- **Código fuente**: [TasksTracker/src/main/java](TasksTracker/src/main/java)
-- **Clase principal**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/MainApp.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/MainApp.java)
-- **Controlador principal**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/controller/MainViewController.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/controller/MainViewController.java)
-- **Modelo de datos**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/model/Task.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/model/Task.java)
-- **Repositorio**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/repository/TaskRepository.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/repository/TaskRepository.java)
-- **Inicializador de BD**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/database/DatabaseInitializer.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/database/DatabaseInitializer.java)
-- **Vistas (FXML)**: [TasksTracker/src/main/resources/views/main-view.fxml](TasksTracker/src/main/resources/views/main-view.fxml), [src/main/resources/views/new-task.fxml](TasksTracker/src/main/resources/views/new-task.fxml)
+## 🚀 Versión 2.0.0 - Spring Boot + Vue (Planificado)
 
-**Base de datos**
-- La aplicación usa SQLite y crea/abre la base de datos localmente al iniciarse. No se requiere configuración adicional; el archivo SQLite se gestiona automáticamente por la aplicación.
+**Objetivo**: Modernizar la arquitectura separando backend (API REST) y frontend (SPA), mejorando la estética y la escalabilidad.
 
-**Contribuciones**
-- Si quieres mejorar funcionalidades (exportar horas, informes mensuales, sincronización), abre un issue o aporta un pull request.
+**Stack tecnológico planificado**
+- **Backend**: Java 21 + Spring Boot 3.x (API REST)
+- **Frontend**: Vue 3 + JavaScript (SPA moderna)
+- **Base de datos**: SQLite (inicialmente, escalable a PostgreSQL)
+- **Build**: Maven (backend) + Vite (frontend)
+- **Estructura**: Monorepo
 
-**Contacto / Soporte**
-- Autor: Pablo González García (Junior Developer)
-- Para cambios o dudas abre un issue en el repositorio o contáctame directamente.
+**Cambios principales**
+- ✅ **Separación de responsabilidades**: Backend proporciona API REST, frontend consume la API
+- ✅ **Mejora visual**: Interfaz moderna y responsiva con Vue 3
+- ✅ **Mejor mantenibilidad**: Código más limpio y modular en ambas capas
+- ✅ **Facilidad de despliegue**: Backend y frontend pueden desplegarse independientemente
+
+**Estructura planificada (v2.0.0)**
+```
+TaskTraker/
+├── backend/                                  # Spring Boot REST API
+│   ├── src/main/java/org/PabloGonzalez/...
+│   │   ├── controller/
+│   │   │   └── TaskController.java           # Endpoints REST
+│   │   ├── service/
+│   │   │   └── TaskService.java              # Lógica de negocio
+│   │   ├── repository/
+│   │   │   └── TaskRepository.java           # Acceso a datos (Spring Data JPA)
+│   │   ├── model/
+│   │   │   └── Task.java                     # Entidad JPA
+│   │   └── TaskTrackerApplication.java       # Punto de entrada
+│   ├── src/main/resources/
+│   │   └── application.properties            # Configuración Spring Boot
+│   ├── pom.xml
+│   └── tracker.db                            # Base de datos SQLite
+│
+├── frontend/                                 # Vue 3 SPA
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── TaskList.vue                  # Listado de tareas
+│   │   │   ├── TaskForm.vue                  # Formulario crear/editar
+│   │   │   └── TaskCard.vue                  # Componente de tarea
+│   │   ├── views/
+│   │   │   └── MainView.vue                  # Vista principal
+│   │   ├── api/
+│   │   │   └── taskService.ts                # Cliente HTTP para API REST
+│   │   ├── App.vue
+│   │   └── main.ts
+│   ├── vite.config.ts
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── README.md                                 # Este archivo
+└── pom.xml                                   # POM padre (opcional, para monorepo Maven)
+```
+
+**Próximos pasos para v2.0.0**
+1. Crear estructura Maven con módulos backend y frontend
+2. Configurar Spring Boot con dependencias iniciales (Web, Data JPA, SQLite)
+3. Generar controladores REST para operaciones CRUD de tareas
+4. Crear proyecto Vue 3 con Vite
+5. Implementar cliente HTTP para consumir la API REST
+6. Migrar componentes visuales a componentes Vue modernos
+7. Configurar CORS en Spring Boot
+8. Testing (JUnit para backend, Vitest para frontend)
+
+---
+
+## 📊 Comparativa v1.0 vs v2.0.0
+
+| Aspecto | v1.0 (JavaFX) | v2.0.0 (Spring Boot + Vue) |
+|--------|---------------|--------------------------|
+| **UI** | JavaFX (escritorio) | Vue 3 (web, responsiva) |
+| **Estética** | Antigua, estándar de sistemas | Moderna, personalizable |
+| **Backend** | Monolítico | API REST independiente |
+| **Base de datos** | SQLite directo | SQLite + Spring Data JPA |
+| **Escalabilidad** | Limitada | Alta (separación de capas) |
+| **Deployment** | JAR ejecutable | Backend JAR + Frontend assets |
+| **Testing** | Manual | Automatizado (JUnit + Vitest) |
+
+---
+
+## 📝 Uso
+
+### v1.0 (Actual)
+- Crear nueva tarea desde la interfaz (`new-task.fxml`)
+- Editar o eliminar tareas desde la vista principal (`main-view.fxml`)
+- Sumar/restar tiempo para contabilizar horas
+
+### v2.0.0 (Planificado)
+- Interfaz web moderna y responsiva
+- API REST para CRUD de tareas
+- Mejor UX/UI con componentes Vue reutilizables
+
+---
+
+## 🤝 Contribuciones
+
+Mejoras sugeridas para futuras versiones:
+- Exportar horas a CSV/Excel
+- Generación de informes mensuales
+- Sincronización en la nube
+- Autenticación de usuarios
+- Categorías/proyectos
+
+---
+
+## 👤 Contacto / Soporte
+
+- **Autor**: Pablo González García (Junior Developer)
+- **Para cambios/dudas**: Abre un issue en el repositorio o contáctame directamente
 
 
