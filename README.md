@@ -27,13 +27,13 @@ Si hay problemas con JavaFX al ejecutar desde línea de comandos, ejecutar desde
 - Añadir o restar tiempo a una tarea para llevar el conteo de horas dedicadas.
 
 **Estructura relevante del proyecto**
-- **Código fuente**: [TasksTracker/src/main/java](src/main/java)
-- **Clase principal**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/MainApp.java](src/main/java/org/PabloGonzalez/TasksTraker/MainApp.java)
-- **Controlador principal**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/controller/MainViewController.java](src/main/java/org/PabloGonzalez/TasksTraker/controller/MainViewController.java)
-- **Modelo de datos**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/model/Task.java](src/main/java/org/PabloGonzalez/TasksTraker/model/Task.java)
-- **Repositorio**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/repository/TaskRepository.java](src/main/java/org/PabloGonzalez/TasksTraker/repository/TaskRepository.java)
-- **Inicializador de BD**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/database/DatabaseInitializer.java](src/main/java/org/PabloGonzalez/TasksTraker/database/DatabaseInitializer.java)
-- **Vistas (FXML)**: [TasksTracker/src/main/resources/views/main-view.fxml](src/main/resources/views/main-view.fxml), [src/main/resources/views/new-task.fxml](src/main/resources/views/new-task.fxml)
+- **Código fuente**: [TasksTracker/src/main/java](TasksTracker/src/main/java)
+- **Clase principal**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/MainApp.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/MainApp.java)
+- **Controlador principal**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/controller/MainViewController.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/controller/MainViewController.java)
+- **Modelo de datos**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/model/Task.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/model/Task.java)
+- **Repositorio**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/repository/TaskRepository.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/repository/TaskRepository.java)
+- **Inicializador de BD**: [TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/database/DatabaseInitializer.java](TasksTracker/src/main/java/org/PabloGonzalez/TasksTraker/database/DatabaseInitializer.java)
+- **Vistas (FXML)**: [TasksTracker/src/main/resources/views/main-view.fxml](TasksTracker/src/main/resources/views/main-view.fxml), [src/main/resources/views/new-task.fxml](TasksTracker/src/main/resources/views/new-task.fxml)
 
 **Base de datos**
 - La aplicación usa SQLite y crea/abre la base de datos localmente al iniciarse. No se requiere configuración adicional; el archivo SQLite se gestiona automáticamente por la aplicación.
