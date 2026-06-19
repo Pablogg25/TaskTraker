@@ -6,87 +6,80 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="535.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.PabloGonzalez.TasksTraker.controller.MainViewController">
+<AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com" xmlns:fx="http://javafx.com" fx:controller="org.PabloGonzalez.TasksTraker.controller.MainViewController">
 
     <children>
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
-        <BorderPane prefHeight="620.0" prefWidth="1055.0">
-
+            <!-- MENÚ DE BOTONES SUPERIOR -->
             <top>
-                <HBox alignment="CENTER" prefHeight="26.0" prefWidth="1055.0" BorderPane.alignment="CENTER">
-
+                <HBox alignment="CENTER" prefHeight="40.0" spacing="10.0" BorderPane.alignment="CENTER">
                     <children>
                         <Button onAction="#onNewTask" prefHeight="25.0" prefWidth="86.0" text="Nueva" />
                         <Button onAction="#onEditTask" prefHeight="25.0" prefWidth="74.0" text="Editar" />
                         <Button onAction="#onDeleteTask" prefHeight="25.0" prefWidth="115.0" text="Eliminar" />
                     </children>
-
                     <cursor>
                         <Cursor fx:constant="DEFAULT" />
                     </cursor>
-
                     <effect>
                         <ColorAdjust />
                     </effect>
-
                 </HBox>
             </top>
 
-            <!-- ===================== -->
-            <!-- CENTER (TABLA FIJA) -->
-            <!-- ===================== -->
+            <!-- CONTENIDO CENTRAL: TABLA + FORMULARIO DINÁMICO -->
             <center>
-                <TableView fx:id="tableView" prefWidth="1055.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+                <VBox spacing="10" style="-fx-padding: 10;" BorderPane.alignment="CENTER">
+                    <children>
 
-                    <columns>
-                        <TableColumn fx:id="nameCol" prefWidth="199.0" text="Nombre" />
-                        <TableColumn fx:id="descCol" prefWidth="476.0" text="Descripción" />
-                        <TableColumn fx:id="hoursCol" prefWidth="122.0" text="Horas Dedicadas" />
-                        <TableColumn fx:id="statusCol" prefWidth="105.0" text="Estado" />
-                        <TableColumn fx:id="actionsCol" prefWidth="148.0" text="Acciones" />
-                    </columns>
+                        <!-- TABLA QUE SE ADAPTA -->
+                        <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="nameCol" prefWidth="199.0" text="Nombre" />
+                                <TableColumn fx:id="descCol" prefWidth="476.0" text="Descripción" />
+                                <TableColumn fx:id="hoursCol" prefWidth="122.0" text="Horas Dedicadas" />
+                                <TableColumn fx:id="statusCol" prefWidth="105.0" text="Estado" />
+                                <TableColumn fx:id="actionsCol" prefWidth="148.0" text="Acciones" />
+                            </columns>
+                        </TableView>
 
-                </TableView>
+                        <!-- PANEL NUEVA TAREA (Se expande y empuja la tabla de forma fluida) -->
+                        <VBox fx:id="newTaskPanel" managed="false" spacing="10" style="-fx-padding: 15; -fx-border-color: lightgray; -fx-border-radius: 5; -fx-background-color: #f9f9f9;" visible="false">
+                            <children>
+                                <Label text="Nueva tarea / Edición">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="nameField" promptText="Nombre tarea" />
+                                <TextArea fx:id="descriptionField" prefHeight="80" promptText="Descripción" />
+                                <HBox spacing="10">
+                                    <children>
+                                        <Button onAction="#onSaveTask" text="Guardar" />
+                                        <Button onAction="#onCancelTask" text="Cancelar" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </VBox>
             </center>
 
-            <!-- ===================== -->
-            <!-- BOTTOM (FORM FIJO) -->
-            <!-- ===================== -->
+            <!-- PIE DE PÁGINA FIJO -->
             <bottom>
-
-                <VBox maxHeight="120" minHeight="29.0" prefHeight="29.0" prefWidth="1055.0" spacing="10" BorderPane.alignment="CENTER">
-
-                    <Label alignment="CENTER" contentDisplay="CENTER" text="TaskTracker">
-                        <font>
-                            <Font name="Corbel" size="12.0" />
-                        </font>
-                    </Label>
-
-                    <!-- PANEL NUEVA TAREA -->
-                    <VBox fx:id="newTaskPanel" managed="false" spacing="10" style="-fx-padding: 10; -fx-border-color: lightgray;" visible="false">
-
-                        <Label text="Nueva tarea" />
-
-                        <TextField fx:id="nameField" promptText="Nombre tarea" />
-
-                        <TextArea fx:id="descriptionField" prefHeight="80" promptText="Descripción" />
-
-                        <HBox spacing="10">
-
-                            <Button onAction="#onSaveTask" text="Guardar" />
-
-                            <Button onAction="#onCancelTask" text="Cancelar" />
-
-                        </HBox>
-
-                    </VBox>
-
-                </VBox>
-
+                <HBox alignment="CENTER" prefHeight="25.0" style="-fx-background-color: #eee;" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label text="TaskTracker">
+                            <font>
+                                <Font name="Corbel" size="12.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
             </bottom>
 
         </BorderPane>
-
     </children>
-
 </AnchorPane>
