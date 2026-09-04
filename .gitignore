@@ -1,0 +1,17 @@
+# Dependencias (se reinstalan con "npm install", no se versionan)
+node_modules/
+
+# Salida de "npm run dist" (instaladores .exe/.dmg/.AppImage generados)
+dist/
+out/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editor (opcional: bórralo si quieres compartir tu configuración de VS Code)
+.vscode/
