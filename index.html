@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TasksTracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-0:#0B1F30;
+    --ink-1:#0F2A43;
+    --ink-2:#123049;
+    --ink-3:#1A3E5C;
+    --line: rgba(234,242,248,0.08);
+    --line-strong: rgba(234,242,248,0.16);
+    --text-0:#EAF2F8;
+    --text-1:#B7CBDA;
+    --text-2:#7F97A9;
+    --amber:#E8A33D;
+    --amber-dim:#C98A2E;
+    --teal:#54B8A6;
+    --teal-dim:rgba(84,184,166,0.14);
+    --rust:#C4573C;
+    --rust-dim:rgba(196,87,60,0.14);
+    --radius: 3px;
+    --font-display:'Space Grotesk', system-ui, sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 28px 28px,
+      var(--ink-0);
+    color:var(--text-0);
+    font-family:var(--font-display);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{ background:var(--amber); color:var(--ink-0); }
+
+  button{ font-family:inherit; }
+
+  .app-shell{
+    max-width:980px;
+    margin:0 auto;
+    padding:48px 24px 96px;
+  }
+
+  /* ===== Masthead ===== */
+  .masthead{
+    display:flex;
+    align-items:flex-start;
+    gap:18px;
+    padding-bottom:28px;
+    border-bottom:1px solid var(--line-strong);
+    margin-bottom:36px;
+    opacity:0;
+    animation:rise .55s ease-out forwards;
+  }
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(6px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .mark{
+    flex:0 0 auto;
+    width:46px; height:46px;
+    border:1.5px solid var(--amber);
+    border-radius:var(--radius);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:15px;
+    color:var(--amber);
+    letter-spacing:0.5px;
+  }
+
+  .masthead-text{ flex:1 1 auto; min-width:0; }
+
+  .masthead h1{
+    margin:0 0 4px;
+    font-size:26px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+
+  .masthead p{
+    margin:0;
+    color:var(--text-2);
+    font-size:14px;
+  }
+
+  .btn{
+    appearance:none;
+    border:1px solid var(--line-strong);
+    background:transparent;
+    color:var(--text-0);
+    padding:10px 16px;
+    border-radius:var(--radius);
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    transition:background-color .15s ease, border-color .15s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{ border-color:var(--text-1); }
+  .btn:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+
+  .btn-primary{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:var(--ink-0);
+    font-weight:600;
+  }
+  .btn-primary:hover{ background:var(--amber-dim); border-color:var(--amber-dim); }
+
+  .btn-danger{ color:var(--rust); border-color:rgba(196,87,60,0.4); }
+  .btn-danger:hover{ background:var(--rust-dim); border-color:var(--rust); }
+
+  .btn-ghost{ border-color:transparent; padding:10px 14px; }
+  .btn-ghost:hover{ background:rgba(234,242,248,0.06); border-color:transparent; }
+
+  .btn-sm{ padding:6px 12px; font-size:13px; }
+
+  /* ===== Grid de tareas ===== */
+  .task-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));
+    gap:16px;
+  }
+
+  .task-card{
+    background:rgba(18,48,73,0.55);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 18px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition:background-color .15s ease, border-color .15s ease;
+  }
+  .task-card:hover{
+    background:rgba(26,62,92,0.55);
+    border-color:var(--line-strong);
+  }
+
+  .card-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+  }
+
+  .status-chip{
+    font-size:12px;
+    padding:3px 9px;
+    border-radius:999px;
+    border:1px solid transparent;
+    font-weight:500;
+  }
+  .status-activa{ color:var(--teal); background:var(--teal-dim); border-color:rgba(84,184,166,0.3); }
+  .status-finalizada{ color:var(--text-2); background:rgba(127,151,169,0.12); border-color:var(--line-strong); }
+
+  .card-actions{ display:flex; gap:2px; }
+  .icon-btn{
+    width:28px; height:28px;
+    border:none;
+    background:transparent;
+    color:var(--text-2);
+    border-radius:var(--radius);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px;
+    transition:background-color .15s ease, color .15s ease;
+  }
+  .icon-btn:hover{ background:rgba(234,242,248,0.08); color:var(--text-0); }
+  .icon-btn.danger:hover{ background:var(--rust-dim); color:var(--rust); }
+  .icon-btn:focus-visible{ outline:2px solid var(--amber); outline-offset:1px; }
+
+  .task-name{
+    margin:0;
+    font-size:17px;
+    font-weight:600;
+    line-height:1.3;
+  }
+
+  .task-desc{
+    margin:0;
+    color:var(--text-1);
+    font-size:13.5px;
+    line-height:1.5;
+    flex:1 1 auto;
+  }
+  .task-desc:empty::before{ content:"Sin descripción."; color:var(--text-2); font-style:italic; }
+
+  .card-footer{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding-top:10px;
+    border-top:1px solid var(--line);
+  }
+
+  .hours-total{ display:flex; align-items:baseline; gap:5px; }
+  .hours-total .num{ font-family:var(--font-mono); font-size:20px; font-weight:600; color:var(--amber); }
+  .hours-total .unit{ font-size:12px; color:var(--text-2); }
+
+  .entries-count{ font-size:12px; color:var(--text-2); font-family:var(--font-mono); }
+
+  /* ===== Estado vacío ===== */
+  .empty-state{
+    text-align:center;
+    padding:64px 24px;
+    color:var(--text-2);
+    border:1px dashed var(--line-strong);
+    border-radius:var(--radius);
+  }
+  .empty-state h2{ color:var(--text-0); font-size:18px; margin:0 0 6px; }
+  .empty-state p{ margin:0 0 18px; font-size:14px; }
+
+  /* ===== Modales ===== */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(6,15,24,0.66);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    z-index:50;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .15s ease;
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+
+  .modal{
+    width:100%;
+    max-width:420px;
+    background:var(--ink-1);
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    padding:22px 22px 20px;
+    transform:scale(0.97) translateY(4px);
+    transition:transform .15s ease;
+    max-height:86vh;
+    overflow-y:auto;
+  }
+  .overlay.open .modal{ transform:scale(1) translateY(0); }
+
+  .modal h3{ margin:0 0 2px; font-size:17px; font-weight:600; }
+  .modal .modal-sub{ margin:0 0 18px; font-size:13px; color:var(--text-2); }
+
+  .field{ margin-bottom:14px; }
+  .field label{
+    display:block;
+    font-size:12.5px;
+    color:var(--text-1);
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="date"],
+  .field textarea,
+  .field select{
+    width:100%;
+    background:var(--ink-0);
+    border:1px solid var(--line-strong);
+    color:var(--text-0);
+    padding:9px 10px;
+    border-radius:var(--radius);
+    font-size:14px;
+    font-family:inherit;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{
+    outline:none;
+    border-color:var(--amber);
+  }
+  .field textarea{ resize:vertical; min-height:64px; }
+  .field-error{
+    font-size:12px;
+    color:var(--rust);
+    margin-top:5px;
+    display:none;
+  }
+  .field.invalid input, .field.invalid textarea{ border-color:var(--rust); }
+  .field.invalid .field-error{ display:block; }
+
+  .field-row{ display:flex; gap:12px; }
+  .field-row .field{ flex:1; }
+
+  .modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:18px;
+  }
+
+  /* Historial de horas dentro del modal */
+  .entries-list{
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  .entries-list h4{
+    margin:0 0 10px;
+    font-size:12.5px;
+    font-weight:500;
+    color:var(--text-2);
+  }
+  .entry-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:7px 0;
+    border-bottom:1px solid var(--line);
+    font-size:13.5px;
+  }
+  .entry-row:last-child{ border-bottom:none; }
+  .entry-date{ color:var(--text-1); font-family:var(--font-mono); font-size:12.5px; }
+  .entry-hours{ font-family:var(--font-mono); color:var(--text-0); font-weight:500; }
+  .entry-remove{
+    background:none; border:none; color:var(--text-2);
+    cursor:pointer; font-size:16px; line-height:1; padding:2px 6px;
+  }
+  .entry-remove:hover{ color:var(--rust); }
+  .entries-empty{ font-size:13px; color:var(--text-2); font-style:italic; padding:6px 0; }
+
+  /* ===== Toast ===== */
+  .toast{
+    position:fixed;
+    bottom:24px;
+    left:50%;
+    transform:translateX(-50%) translateY(12px);
+    background:var(--ink-2);
+    border:1px solid var(--line-strong);
+    color:var(--text-0);
+    padding:11px 18px;
+    border-radius:var(--radius);
+    font-size:13.5px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:80;
+    max-width:90vw;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast.error{ border-color:rgba(196,87,60,0.5); }
+
+  footer.colophon{
+    margin-top:56px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:12px;
+    color:var(--text-2);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  footer.colophon span.mono{ font-family:var(--font-mono); }
+
+  @media (max-width:600px){
+    .app-shell{ padding:32px 16px 72px; }
+    .masthead{ flex-wrap:wrap; }
+    .masthead .btn-primary{ margin-left:64px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <header class="masthead">
+    <div class="mark">TT</div>
+    <div class="masthead-text">
+      <h1>TasksTracker</h1>
+      <p>Tus tareas y las horas que les dedicas, guardado en tu ordenador.</p>
+    </div>
+    <button class="btn btn-primary" id="btn-new-task">+ Nueva tarea</button>
+  </header>
+
+  <main>
+    <div class="task-grid" id="task-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <h2>Aún no hay ninguna tarea</h2>
+      <p>Crea la primera para empezar a registrar horas.</p>
+      <button class="btn btn-primary" id="btn-empty-new">+ Nueva tarea</button>
+    </div>
+  </main>
+
+  <footer class="colophon">
+    <span>Registro personal — guardado en un archivo de tu ordenador.</span>
+    <span class="mono" id="task-count">0 tareas</span>
+  </footer>
+</div>
+
+<!-- Modal: crear / editar tarea -->
+<div class="overlay" id="overlay-task">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="task-modal-title">Nueva tarea</h3>
+    <p class="modal-sub">Define qué es y en qué punto está.</p>
+
+    <form id="form-task">
+      <div class="field" id="field-name">
+        <label for="input-name">Nombre</label>
+        <input type="text" id="input-name" maxlength="120" autocomplete="off" />
+        <div class="field-error">Escribe un nombre para la tarea.</div>
+      </div>
+
+      <div class="field">
+        <label for="input-desc">Descripción</label>
+        <textarea id="input-desc" maxlength="600"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="input-status">Estado</label>
+        <select id="input-status">
+          <option value="ACTIVA">Activa</option>
+          <option value="FINALIZADA">Finalizada</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-overlay="overlay-task">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: añadir horas -->
+<div class="overlay" id="overlay-hours">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3>Añadir horas</h3>
+    <p class="modal-sub" id="hours-task-name"></p>
+
+    <form id="form-hours">
+      <div class="field-row">
+        <div class="field" id="field-hours">
+          <label for="input-hours">Horas</label>
+          <input type="number" id="input-hours" step="0.25" min="0.01" />
+          <div class="field-error">Introduce un número mayor que 0.</div>
+        </div>
+        <div class="field" id="field-date">
+          <label for="input-date">Fecha</label>
+          <input type="date" id="input-date" />
+          <div class="field-error">Elige una fecha.</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-overlay="overlay-hours">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Añadir</button>
+      </div>
+    </form>
+
+    <div class="entries-list">
+      <h4>Historial de esta tarea</h4>
+      <div id="entries-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: confirmar borrado -->
+<div class="overlay" id="overlay-delete">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:380px;">
+    <h3>Eliminar tarea</h3>
+    <p class="modal-sub" id="delete-task-name" style="color:var(--text-0);"></p>
+    <p style="font-size:13.5px; color:var(--text-2); margin:0 0 4px;">Esto también borrará su historial de horas registradas. No se puede deshacer.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" data-close-overlay="overlay-delete">Cancelar</button>
+      <button type="button" class="btn btn-danger" id="btn-confirm-delete">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  let state = { tasks: [] };
+  let activeTaskId = null; // tarea sobre la que actúa el modal de horas/borrado/edición
+
+  const el = (id) => document.getElementById(id);
+  const grid = el("task-grid");
+  const emptyState = el("empty-state");
+  const taskCountEl = el("task-count");
+
+  // ---------- Persistencia ----------
+  async function loadState(){
+    try{
+      const data = await window.tasksAPI.load();
+      if(data && Array.isArray(data.tasks)) state = data;
+    }catch(e){
+      state = { tasks: [] };
+    }
+    render();
+  }
+
+  async function saveState(){
+    try{
+      await window.tasksAPI.save(state);
+    }catch(e){
+      showToast("No se ha podido guardar el cambio. Vuelve a intentarlo.", "error");
+    }
+  }
+
+  function uid(){
+    return (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()));
+  }
+
+  function todayISO(){
+    const d = new Date();
+    const offset = d.getTimezoneOffset();
+    return new Date(d.getTime() - offset*60000).toISOString().slice(0,10);
+  }
+
+  function totalHours(task){
+    return task.entries.reduce((sum, e) => sum + e.hours, 0);
+  }
+
+  function formatHours(n){
+    const rounded = Math.round(n * 100) / 100;
+    return rounded.toString();
+  }
+
+  function formatDate(iso){
+    const [y,m,d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  // ---------- Render ----------
+  function render(){
+    grid.innerHTML = "";
+
+    if(state.tasks.length === 0){
+      emptyState.style.display = "block";
+      grid.style.display = "none";
+    }else{
+      emptyState.style.display = "none";
+      grid.style.display = "grid";
+
+      // Más recientes primero
+      const sorted = [...state.tasks].sort((a,b) => b.createdAt - a.createdAt);
+
+      for(const task of sorted){
+        grid.appendChild(renderTaskCard(task));
+      }
+    }
+
+    taskCountEl.textContent = `${state.tasks.length} ${state.tasks.length === 1 ? "tarea" : "tareas"}`;
+  }
+
+  function renderTaskCard(task){
+    const card = document.createElement("article");
+    card.className = "task-card";
+    card.dataset.id = task.id;
+
+    const statusClass = task.status === "ACTIVA" ? "status-activa" : "status-finalizada";
+    const statusLabel = task.status === "ACTIVA" ? "Activa" : "Finalizada";
+    const hours = totalHours(task);
+
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="status-chip ${statusClass}">${statusLabel}</span>
+        <div class="card-actions">
+          <button class="icon-btn" data-action="edit" title="Editar" aria-label="Editar tarea">✎</button>
+          <button class="icon-btn" data-action="hours" title="Añadir horas" aria-label="Añadir horas">⏱</button>
+          <button class="icon-btn danger" data-action="delete" title="Eliminar" aria-label="Eliminar tarea">🗑</button>
+        </div>
+      </div>
+      <h2 class="task-name"></h2>
+      <p class="task-desc"></p>
+      <div class="card-footer">
+        <div class="hours-total"><span class="num">${formatHours(hours)}</span><span class="unit">h totales</span></div>
+        <div class="entries-count">${task.entries.length} ${task.entries.length === 1 ? "registro" : "registros"}</div>
+      </div>
+    `;
+
+    // textContent para nombre/descripción: evita cualquier problema de HTML injection
+    // si el usuario escribe caracteres como < o &.
+    card.querySelector(".task-name").textContent = task.name;
+    card.querySelector(".task-desc").textContent = task.description || "";
+
+    return card;
+  }
+
+  // ---------- Toast ----------
+  let toastTimer = null;
+  function showToast(msg, type){
+    const t = el("toast");
+    t.textContent = msg;
+    t.className = "toast show" + (type === "error" ? " error" : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.classList.remove("show"); }, 3200);
+  }
+
+  // ---------- Overlays ----------
+  function openOverlay(id){
+    el(id).classList.add("open");
+  }
+  function closeOverlay(id){
+    el(id).classList.remove("open");
+  }
+  document.querySelectorAll("[data-close-overlay]").forEach(btn => {
+    btn.addEventListener("click", () => closeOverlay(btn.dataset.closeOverlay));
+  });
+  document.querySelectorAll(".overlay").forEach(ov => {
+    ov.addEventListener("click", (e) => { if(e.target === ov) ov.classList.remove("open"); });
+  });
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape"){
+      document.querySelectorAll(".overlay.open").forEach(ov => ov.classList.remove("open"));
+    }
+  });
+
+  // ---------- Validación de campos ----------
+  function setFieldError(fieldId, invalid){
+    const field = el(fieldId);
+    field.classList.toggle("invalid", invalid);
+  }
+
+  // ---------- Modal: crear / editar tarea ----------
+  const formTask = el("form-task");
+  const inputName = el("input-name");
+  const inputDesc = el("input-desc");
+  const inputStatus = el("input-status");
+
+  function openTaskModal(task){
+    activeTaskId = task ? task.id : null;
+    el("task-modal-title").textContent = task ? "Editar tarea" : "Nueva tarea";
+    inputName.value = task ? task.name : "";
+    inputDesc.value = task ? (task.description || "") : "";
+    inputStatus.value = task ? task.status : "ACTIVA";
+    setFieldError("field-name", false);
+    openOverlay("overlay-task");
+    inputName.focus();
+  }
+
+  el("btn-new-task").addEventListener("click", () => openTaskModal(null));
+  el("btn-empty-new").addEventListener("click", () => openTaskModal(null));
+
+  formTask.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = inputName.value.trim();
+
+    if(!name){
+      setFieldError("field-name", true);
+      inputName.focus();
+      return;
+    }
+    setFieldError("field-name", false);
+
+    if(activeTaskId){
+      const task = state.tasks.find(t => t.id === activeTaskId);
+      if(task){
+        task.name = name;
+        task.description = inputDesc.value.trim();
+        task.status = inputStatus.value;
+      }
+      showToast("Tarea actualizada.");
+    }else{
+      state.tasks.push({
+        id: uid(),
+        name,
+        description: inputDesc.value.trim(),
+        status: inputStatus.value,
+        entries: [],
+        createdAt: Date.now(),
+      });
+      showToast("Tarea creada.");
+    }
+
+    await saveState();
+    render();
+    closeOverlay("overlay-task");
+  });
+
+  // ---------- Modal: añadir horas ----------
+  const formHours = el("form-hours");
+  const inputHours = el("input-hours");
+  const inputDate = el("input-date");
+  const entriesContainer = el("entries-container");
+
+  function openHoursModal(task){
+    activeTaskId = task.id;
+    el("hours-task-name").textContent = task.name;
+    inputHours.value = "";
+    inputDate.value = todayISO();
+    setFieldError("field-hours", false);
+    setFieldError("field-date", false);
+    renderEntries(task);
+    openOverlay("overlay-hours");
+    inputHours.focus();
+  }
+
+  function renderEntries(task){
+    entriesContainer.innerHTML = "";
+    if(task.entries.length === 0){
+      entriesContainer.innerHTML = `<div class="entries-empty">Todavía no se han registrado horas.</div>`;
+      return;
+    }
+    const sorted = [...task.entries].sort((a,b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+    for(const entry of sorted){
+      const row = document.createElement("div");
+      row.className = "entry-row";
+      row.innerHTML = `
+        <span class="entry-date">${formatDate(entry.date)}</span>
+        <span class="entry-hours">${formatHours(entry.hours)} h</span>
+        <button class="entry-remove" title="Eliminar registro" aria-label="Eliminar registro">×</button>
+      `;
+      row.querySelector(".entry-remove").addEventListener("click", async () => {
+        task.entries = task.entries.filter(e => e.id !== entry.id);
+        await saveState();
+        renderEntries(task);
+        render();
+      });
+      entriesContainer.appendChild(row);
+    }
+  }
+
+  formHours.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const task = state.tasks.find(t => t.id === activeTaskId);
+    if(!task) return;
+
+    const hours = parseFloat(inputHours.value);
+    const date = inputDate.value;
+
+    let invalid = false;
+    if(!(hours > 0)){ setFieldError("field-hours", true); invalid = true; } else setFieldError("field-hours", false);
+    if(!date){ setFieldError("field-date", true); invalid = true; } else setFieldError("field-date", false);
+    if(invalid) return;
+
+    task.entries.push({ id: uid(), hours, date, createdAt: Date.now() });
+    await saveState();
+    render();
+    renderEntries(task);
+    inputHours.value = "";
+    inputDate.value = todayISO();
+    inputHours.focus();
+    showToast("Horas añadidas.");
+  });
+
+  // ---------- Modal: eliminar tarea ----------
+  function openDeleteModal(task){
+    activeTaskId = task.id;
+    el("delete-task-name").textContent = task.name;
+    openOverlay("overlay-delete");
+  }
+
+  el("btn-confirm-delete").addEventListener("click", async () => {
+    state.tasks = state.tasks.filter(t => t.id !== activeTaskId);
+    await saveState();
+    render();
+    closeOverlay("overlay-delete");
+    showToast("Tarea eliminada.");
+  });
+
+  // ---------- Delegación de acciones de cada tarjeta ----------
+  grid.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-action]");
+    if(!btn) return;
+    const card = e.target.closest(".task-card");
+    const task = state.tasks.find(t => t.id === card.dataset.id);
+    if(!task) return;
+
+    const action = btn.dataset.action;
+    if(action === "edit") openTaskModal(task);
+    else if(action === "hours") openHoursModal(task);
+    else if(action === "delete") openDeleteModal(task);
+  });
+
+  // ---------- Arranque ----------
+  loadState();
+})();
+</script>
+
+</body>
+</html>
